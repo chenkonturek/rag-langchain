@@ -20,6 +20,9 @@ python main.py "Your question here"
 
 # Interactive Q&A session
 python main.py
+
+# Web chatbot interface
+streamlit run app.py
 ```
 
 ## Architecture

@@ -8,6 +8,7 @@ A document question-answering system using Retrieval-Augmented Generation (RAG) 
 - **Semantic search** — ChromaDB vector store with persistent storage across sessions
 - **AI-powered answers** — Google Gemini 2.0 Flash with source attribution
 - **Intelligent chunking** — Recursive text splitting (chunk size: 1000, overlap: 200)
+- **Web chatbot UI** — Streamlit interface with chat history and source attribution
 
 ## Setup
 
@@ -40,24 +41,20 @@ Run this once, and again whenever you add or change files in `docs/`.
 
 **3. Ask questions**
 
-Single question:
+Web chatbot (recommended):
+```bash
+streamlit run app.py
+```
+Opens at `http://localhost:8501` with a chat interface and collapsible source citations.
+
+Single question (CLI):
 ```bash
 python main.py "What is the main topic of the documents?"
 ```
 
-Interactive mode:
+Interactive CLI mode:
 ```bash
 python main.py
-```
-
-Example output:
-```
-Answer:
-The document describes...
-
-Sources:
-  - docs/report.pdf (page 3)
-  - docs/notes.txt
 ```
 
 ## Project Structure
@@ -67,6 +64,7 @@ rag-langchain/
 ├── docs/          # Place your PDF and TXT documents here
 ├── chroma_db/     # Persistent vector store (created after first ingest)
 ├── ingest.py      # Document ingestion pipeline
-├── main.py        # Q&A CLI
+├── main.py        # Q&A CLI and shared chain builder
+├── app.py         # Streamlit web chatbot
 └── requirements.txt
 ```
