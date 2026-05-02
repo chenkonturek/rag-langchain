@@ -25,7 +25,10 @@ def format_docs(docs):
 
 
 def build_chain():
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model="models/gemini-embedding-001",
+        requests_per_minute=80,
+    )
     vectorstore = Chroma(persist_directory=CHROMA_DIR, embedding_function=embeddings)
     retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
 

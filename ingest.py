@@ -1,5 +1,6 @@
 import os
 import glob
+import time
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -12,6 +13,7 @@ DOCS_DIR = "./docs"
 CHROMA_DIR = "./chroma_db"
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
+BATCH_SIZE = 80  # stay under free-tier limit of 100 RPM
 
 
 def load_documents():
@@ -37,9 +39,20 @@ def main():
     chunks = splitter.split_documents(documents)
     print(f"Split into {len(chunks)} chunks from {len(documents)} pages/documents.")
 
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    print("Embedding and storing in ChromaDB...")
-    Chroma.from_documents(chunks, embeddings, persist_directory=CHROMA_DIR)
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+
+    print("Embedding and storing in ChromaDB (batching to respect rate limits)...")
+    vectorstore = None
+    for i in range(0, len(chunks), BATCH_SIZE):
+        batch = chunks[i:i + BATCH_SIZE]
+        print(f"  Batch {i // BATCH_SIZE + 1}/{-(-len(chunks) // BATCH_SIZE)}: chunks {i + 1}–{min(i + BATCH_SIZE, len(chunks))}")
+        if vectorstore is None:
+            vectorstore = Chroma.from_documents(batch, embeddings, persist_directory=CHROMA_DIR)
+        else:
+            vectorstore.add_documents(batch)
+        if i + BATCH_SIZE < len(chunks):
+            time.sleep(61)  # wait for the rate-limit window to reset
+
     print(f"Done. {len(chunks)} chunks stored in '{CHROMA_DIR}'.")
 
 
