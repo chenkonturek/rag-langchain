@@ -40,4 +40,10 @@ Two-script pipeline with a shared ChromaDB store:
 - After the chain produces an answer, `retriever.invoke()` is called a second time to collect source metadata (file path + page number for PDFs)
 - Supports both single-question CLI mode (`sys.argv`) and an interactive REPL
 
-**Key constraint:** `ingest.py` must be re-run whenever `docs/` changes — `main.py` reads only from the persisted `chroma_db/` and will not pick up new documents automatically.
+**`app.py`** — Streamlit web chatbot:
+- Uses `@st.cache_resource` to call `build_chain()` once per server process
+- Maintains chat history in `st.session_state.messages` (role + content + sources)
+- Deduplicates sources by `(source, page)` key before rendering in a collapsible expander
+- Run with `streamlit run app.py`; opens at `http://localhost:8501`
+
+**Key constraint:** `ingest.py` must be re-run whenever `docs/` changes — `main.py` and `app.py` read only from the persisted `chroma_db/` and will not pick up new documents automatically.

@@ -25,6 +25,8 @@ GOOGLE_API_KEY=your_api_key_here
 
 Get a key at [Google AI Studio](https://aistudio.google.com/app/apikey).
 
+> **Quota note:** If you see a `429 RESOURCE_EXHAUSTED` error with `limit: 0`, your Google Cloud project has billing enabled but no free-tier quota for `gemini-2.0-flash`. Create a fresh API key in a new AI Studio project (without billing attached) to restore the free tier (15 RPM / 1,500 req/day).
+
 ## Usage
 
 **1. Add documents**
@@ -61,10 +63,11 @@ python main.py
 
 ```
 rag-langchain/
-├── docs/          # Place your PDF and TXT documents here
-├── chroma_db/     # Persistent vector store (created after first ingest)
-├── ingest.py      # Document ingestion pipeline
-├── main.py        # Q&A CLI and shared chain builder
-├── app.py         # Streamlit web chatbot
-└── requirements.txt
+├── docs/            # Place your PDF and TXT documents here
+├── chroma_db/       # Persistent vector store (created after first ingest)
+├── ingest.py        # Document ingestion pipeline
+├── main.py          # Q&A CLI and shared chain builder
+├── app.py           # Streamlit web chatbot
+├── requirements.txt
+└── .env.example     # Copy to .env and add GOOGLE_API_KEY
 ```
